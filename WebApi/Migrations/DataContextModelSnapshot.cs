@@ -41,7 +41,29 @@ namespace WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CodetTables");
+                    b.ToTable("CodeTables");
+                });
+
+            modelBuilder.Entity("WebApi.Data.CodeTableApp", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("desc")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("longdesc")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CodeTableApps");
                 });
 
             modelBuilder.Entity("WebApi.Data.Customer", b =>
@@ -58,10 +80,6 @@ namespace WebApi.Migrations
 
                     b.Property<int>("CustLoginID")
                         .HasColumnType("int");
-
-                    b.Property<string>("EmailAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -87,6 +105,22 @@ namespace WebApi.Migrations
                     b.Property<int>("CustID")
                         .HasColumnType("int");
 
+                    b.Property<int>("OrderDetailID")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("WebApi.Data.OrderDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
                     b.Property<string>("ProdId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -94,14 +128,9 @@ namespace WebApi.Migrations
                     b.Property<double>("Qty")
                         .HasColumnType("float");
 
-                    b.Property<string>("refNo")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("WebApi.Data.Product", b =>
@@ -135,6 +164,37 @@ namespace WebApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("WebApi.Data.TransactionDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("IsPaid")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrderID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TransactionDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TransactionType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TransactionDetails");
                 });
 
             modelBuilder.Entity("WebApi.Data.User", b =>

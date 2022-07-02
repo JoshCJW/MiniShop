@@ -17,6 +17,5 @@ namespace WebApi.Data
 
         [MaxLength(8)]
         public int ContactNo { get; set; }
-        public string EmailAddress { get; set; } = string.Empty;
     }
 }

@@ -1,0 +1,63 @@
+﻿@page "/Admin"
+@using MiniShopWeb
+@using WebApi.Data
+
+<h3>Admin Page</h3>
+<hr />
+@if (Customers.Count > 0)
+{
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Customer's Login ID</th>
+            <th>Customer's Name</th>
+            <th>Contact Number</th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in Customers)
+
+            {
+                <tr>
+                    <td>@customer.CustLoginID</td>
+                    <td>@customer.Name</td>
+                    <td>@customer.ContactNo</td>
+
+                </tr>
+
+            }
+
+        </tbody>
+
+    </table>
+
+  @* 
+    <ul>
+        @foreach (var customer in Customers)
+
+        {
+            <li class="Customertable">@customer.FirstName @customer.LastName , @customer.ContactNo</li>
+        }
+    </ul>*@
+
+
+}
+
+@code
+{
+    List<Customer> Customers = new List<Customer>();
+    protected override async Task OnInitializedAsync()
+    {
+        using (var http = new HttpClient())
+        {
+            string url = "https://localhost:7010/Customers";
+            var list = await http.GetFromJsonAsync<List<Customer>>(url);
+            if (list != null)
+            {
+                Customers.AddRange(list);
+            }
+        }
+    }
+
+}

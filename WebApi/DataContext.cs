@@ -23,8 +23,18 @@ namespace WebApi
         //Creation of table call Orders
         public DbSet<Order> Orders => Set<Order>();
 
+        //Creation of table call OrdersDetails
+        public DbSet<OrderDetails> OrderDetails => Set<OrderDetails>();
+
+
+        //Creation of table call TransactionTable
+        public DbSet<TransactionDetails> TransactionDetails => Set<TransactionDetails>();
+
         //Creation of table call CodeTable
-        public DbSet<CodeTable> CodetTables => Set<CodeTable>();
+        public DbSet<CodeTable> CodeTables => Set<CodeTable>();
+
+        //Creation of table call CodeTable
+        public DbSet<CodeTableApp> CodeTableApps => Set<CodeTableApp>();
 
     }
 }

@@ -10,7 +10,7 @@ namespace WebApi.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "CodetTables",
+                name: "CodeTableApps",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -20,7 +20,21 @@ namespace WebApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CodetTables", x => x.Id);
+                    table.PrimaryKey("PK_CodeTableApps", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CodeTables",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    desc = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    longdesc = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CodeTables", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -31,12 +45,25 @@ namespace WebApi.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CustLoginID = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    ContactNo = table.Column<int>(type: "int", maxLength: 8, nullable: false),
-                    EmailAddress = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ContactNo = table.Column<int>(type: "int", maxLength: 8, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Customers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderDetails",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProdId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Qty = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderDetails", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -45,10 +72,8 @@ namespace WebApi.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    refNo = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    OrderDetailID = table.Column<int>(type: "int", nullable: false),
                     CustID = table.Column<int>(type: "int", nullable: false),
-                    ProdId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Qty = table.Column<double>(type: "float", nullable: false),
                     Amt = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
@@ -74,6 +99,23 @@ namespace WebApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TransactionDetails",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TransactionType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderID = table.Column<int>(type: "int", nullable: false),
+                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsPaid = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TransactionDateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TransactionDetails", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -96,16 +138,25 @@ namespace WebApi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CodetTables");
+                name: "CodeTableApps");
+
+            migrationBuilder.DropTable(
+                name: "CodeTables");
 
             migrationBuilder.DropTable(
                 name: "Customers");
+
+            migrationBuilder.DropTable(
+                name: "OrderDetails");
 
             migrationBuilder.DropTable(
                 name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "TransactionDetails");
 
             migrationBuilder.DropTable(
                 name: "Users");

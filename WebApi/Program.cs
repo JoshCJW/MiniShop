@@ -1,7 +1,6 @@
 global using Microsoft.EntityFrameworkCore;
 using WebApi;
 using WebApi.Data;
-using WebApi.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +21,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
 
 app.MapGet("/", () => "Welcome to My MiniShop API");
 
@@ -62,7 +63,6 @@ app.MapPut("/Customer/{id}", async (DataContext context, Customer cust, int id) 
 
     dbCust.Name = cust.Name;
     dbCust.ContactNo = cust.ContactNo;
-    dbCust.EmailAddress = cust.EmailAddress;
     await context.SaveChangesAsync();
     // Return all customers after save changes
     return Results.Ok(await GetAllCust(context));
@@ -159,10 +159,8 @@ app.MapPut("/Order/{id}", async (DataContext context, Order ord, int id) =>
     var dbOrd = await context.Orders.FindAsync(id);
     if (dbOrd == null) return Results.NotFound("No Product Found");
 
-    dbOrd.refNo = ord.refNo;
+    dbOrd.OrderDetailID = ord.OrderDetailID;
     dbOrd.CustID = ord.CustID;
-    dbOrd.ProdId = ord.ProdId;
-    dbOrd.Qty = ord.Qty;
     dbOrd.Amt = ord.Amt;
 
 
@@ -184,7 +182,203 @@ app.MapDelete("/Order/{id}", async (DataContext context, int id) =>
 });
 #endregion
 
+#region OrderDetails
+async Task<List<OrderDetails>> GetAllOrdDetails(DataContext context) => await context.OrderDetails.ToListAsync();
+
+// Getting all orderdeatils
+app.MapGet("/OrdersDetails", async (DataContext context) => await context.OrderDetails.ToListAsync());
+
+// Getting a Single orderdetail, If order detail id is not found will promot error
+app.MapGet("/OrdersDetails/{id}", async (DataContext context, int id) =>
+    await context.OrderDetails.FindAsync(id) is OrderDetails ordet ? Results.Ok(ordet) : Results.NotFound("Order detail not found"));
+
+// Creating of OrderDetails
+app.MapPost("/OrdersDetail", async (DataContext context, OrderDetails ordet) =>
+
+{
+    context.OrderDetails.Add(ordet);
+    await context.SaveChangesAsync();
+    // Return all orders after save changes
+    return Results.Ok(await GetAllOrdDetails(context));
+});
+
+
+// Update of Order Details
+app.MapPut("/OrderDetail/{id}", async (DataContext context, OrderDetails ordet, int id) =>
+{
+    var dbOrdet = await context.OrderDetails.FindAsync(id);
+    if (dbOrdet == null) return Results.NotFound("No Product Found");
+
+    dbOrdet.ProdId = ordet.ProdId;
+    dbOrdet.Qty = ordet.Qty;
+
+    await context.SaveChangesAsync();
+    // Return all order after save changes
+    return Results.Ok(await GetAllOrdDetails(context));
+
+});
+
+// Delete of OrderDetail
+app.MapDelete("/OrderDetail/{id}", async (DataContext context, int id) =>
+{
+    var dbOrdet = await context.OrderDetails.FindAsync(id);
+    if (dbOrdet == null) return Results.NotFound("Error. Order Details not Found");
+
+    context.OrderDetails.Remove(dbOrdet);
+    await context.SaveChangesAsync();
+    // Return all product after save changes
+    return Results.Ok(await GetAllOrdDetails(context));
+});
+
+#endregion
+
+#region TransactionDetails
+async Task<List<TransactionDetails>> GetAllTransactionDetails(DataContext context) => await context.TransactionDetails.ToListAsync();
+
+// Getting a Single transaction ID, If Transaction id is not found will promot error
+app.MapGet("/TransactionDetail/{id}", async (DataContext context, int id) =>
+    await context.TransactionDetails.FindAsync(id) is TransactionDetails ordet ? Results.Ok(ordet) : Results.NotFound("Transaction detail not found"));
+
+
+// Creating of Transaction Details
+app.MapPost("/TransactionDetail", async (DataContext context, TransactionDetails TransDet) =>
+
+{
+    context.TransactionDetails.Add(TransDet);
+    await context.SaveChangesAsync();
+    return Results.Ok("Transaction Added");
+});
+
+// Update of Transactions Details
+app.MapPut("/TransactionDetail/{id}", async (DataContext context, TransactionDetails TransDet, int id) =>
+{
+    var dbTransDet = await context.TransactionDetails.FindAsync(id);
+    if (dbTransDet == null) return Results.NotFound("No Transaction Detail Found");
+
+    dbTransDet.OrderID = TransDet.OrderID;
+    dbTransDet.PaymentMethod = TransDet.PaymentMethod;
+    dbTransDet.IsPaid = TransDet.IsPaid;
+    dbTransDet.TransactionDateTime = TransDet.TransactionDateTime;
+
+    await context.SaveChangesAsync();
+    // Return all order after save changes
+    return Results.Ok("Updated Completed");
+
+});
+
+
+// Delete of TransactionDetail
+app.MapDelete("/TransactionDetail/{id}", async (DataContext context, int id) =>
+{
+    var dbTransDet = await context.TransactionDetails.FindAsync(id);
+    if (dbTransDet == null) return Results.NotFound("Error. Transaction Details not Found");
+
+    context.TransactionDetails.Remove(dbTransDet);
+    await context.SaveChangesAsync();
+    return Results.Ok("Deletion Completed");
+});
+
+
+#endregion
+
 #region Codetable
+async Task<List<CodeTable>> GetAllCodeTable(DataContext context) => await context.CodeTables.ToListAsync();
+
+
+// Getting a Single CodeTable ID, If CodeTable id is not found will promot error
+app.MapGet("/CodeTable/{id}", async (DataContext context, int id) =>
+    await context.CodeTables.FindAsync(id) is CodeTable Ctdet ? Results.Ok(Ctdet) : Results.NotFound("Code Table Details not found"));
+
+
+// Creating of Code Table Details
+app.MapPost("/CodeTable", async (DataContext context, CodeTable CtDet) =>
+
+{
+    context.CodeTables.Add(CtDet);
+    await context.SaveChangesAsync();
+    return Results.Ok("CodeTable Added");
+});
+
+// Update of Code Table Details
+app.MapPut("/CodeTable/{id}", async (DataContext context, CodeTable CtDet, int id) =>
+{
+    var dbCtdet = await context.CodeTables.FindAsync(id);
+    if (dbCtdet == null) return Results.NotFound("No Code Table Detail Found");
+
+    dbCtdet.desc = CtDet.desc;
+    dbCtdet.longdesc = CtDet.longdesc;
+
+    await context.SaveChangesAsync();
+
+    return Results.Ok("Updated Completed");
+
+});
+
+
+// Delete of Code Table Detail
+app.MapDelete("/CodeTable/{id}", async (DataContext context, int id) =>
+{
+    var dbCtdet = await context.CodeTables.FindAsync(id);
+    if (dbCtdet == null) return Results.NotFound("Error. Code Table Details not Found");
+
+    context.CodeTables.Remove(dbCtdet);
+    await context.SaveChangesAsync();
+    // Return all product after save changes
+    return Results.Ok("Deletion Completed");
+});
+
+
+
+#endregion
+
+#region CodetableApp
+
+async Task<List<CodeTableApp>> GetAllCodeTableApp(DataContext context) => await context.CodeTableApps.ToListAsync();
+
+
+// Getting a Single CodeTableApp ID, If CodeTable id is not found will promot error
+app.MapGet("/CodeTableApp/{id}", async (DataContext context, int id) =>
+    await context.CodeTableApps.FindAsync(id) is CodeTableApp CtAppdet ? Results.Ok(CtAppdet) : Results.NotFound("Code Table App Details not found"));
+
+
+// Creating of CodeTable APP Details
+app.MapPost("/CodeTableApp", async (DataContext context, CodeTableApp CtAppdet) =>
+
+{
+    context.CodeTableApps.Add(CtAppdet);
+    await context.SaveChangesAsync();
+    return Results.Ok("CodeTableApp Added");
+});
+
+// Update of Code Table App Details
+app.MapPut("/CodeTableApp/{id}", async (DataContext context, CodeTableApp CtAppdet, int id) =>
+{
+    var dbCtAppdet = await context.CodeTableApps.FindAsync(id);
+    if (dbCtAppdet == null) return Results.NotFound("No Code Table App Detail Found");
+
+    dbCtAppdet.desc = CtAppdet.desc;
+    dbCtAppdet.longdesc = CtAppdet.longdesc;
+
+    await context.SaveChangesAsync();
+
+    return Results.Ok("Updated Completed");
+
+});
+
+
+// Delete of Code Table App Details
+app.MapDelete("/CodeTableApp/{id}", async (DataContext context, int id) =>
+{
+    var dbCtAppdet = await context.CodeTableApps.FindAsync(id);
+    if (dbCtAppdet == null) return Results.NotFound("Error. Code Table App Details not Found");
+
+    context.CodeTableApps.Remove(dbCtAppdet);
+    await context.SaveChangesAsync();
+    return Results.Ok("Deletion Completed");
+});
+
+
+
 
 #endregion
 
